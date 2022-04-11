@@ -1,0 +1,91 @@
+---
+title: "Untitled"
+author: "Danur"
+date: "01/04/2022"
+output: html_document
+---
+
+
+
+
+```{r}
+UCLAdata <- read_csv("data/UCLA.csv")
+UCLAdata <- UCLAdata %>% select(-state)
+ACSdata <- read_csv("data/ACS.csv")
+```
+
+
+```{r, warning= FALSE}
+model <- glm(vote_trump ~  age + as.factor(race) + as.factor(education_category) + sex + stateicp, data = UCLAdata, family = "binomial")
+
+
+
+Betavalues <- broom::tidy(model)
+
+# create a table with the results of our coefficients along with p-values and
+# confidence intervals
+
+
+Betavalues <- Betavalues %>% rename( 'standard error' = 'std.error',
+                                          'p-value' = 'p.value',
+                                         'lower bound' = 'conf.low',
+                                          'upper bound' =  'conf.high') 
+                                                               
+
+knitr::kable(Betavalues,
+             caption = "Coefficients from the Model",
+             digits = 3) %>% 
+  kableExtra::kable_styling(latex_options = "striped")
+#summary(model)
+
+
+expmodel <- round(exp(cbind(coefficient = coef(model), confint(model))), 3)
+
+exptib <- tibble(expmodel)
+
+exptib <- exptib %>%  rename('coefficient' = 1,
+                             'lower bound' = 2,
+                             'upper bound' = 3)
+
+knitr::kable(expmodel,
+             caption = "Exponentiated Coefficients from the Model",
+             digits = 3) %>% 
+  kableExtra::kable_styling(latex_options = "striped")
+
+```
+# results:
+
+We can see from the results of the logistic regression model above that most of the states are not in favor of voting for Trump. This can be seen from the negative values that we get in the regression table that we have.
+Since we have done a logistic regression model, the coefficient values that we get cant be interpreted normally, they are the log odd ratio's. What this means is that if the value that we get is negative, then the voter is more likely to vote for Joe Biden, whereas if the value that we get is positive, then the voter is more likely to vote for Donald Trump. Based on the results above, we can see that age is the only variable that has a positive effect on Trump, as the voter gets older, there is a higher chance for them to vote for Trump. We can get odds ratios for the model simply by exponentiating the coefficients. What these odd ratios tell us are the relative chance that a particular group votes for Trump as compared to the baseline for that group. We can see from the table above that African American people (race2) are very unlikely to vote for Trump. the coefficient tells us that the probability that an African American votes for Trump is 0.17 the probability that a white person votes for Trump. Similarly, for education we can see that the more educated that you are, the less likely it is that you vote for Donald Trump, as can be seen from the coefficients. While all of the states are slightly against voting for Trump, some of them are very heavily against him. States like Columbia, Rhode Island and Vermont are very likely to vote for Joe Biden instead of Trump.
+
+
+
+
+```{r cooks, echo=F, message=F, warning=F, fig.cap="Cook's Distance Plot for Model"}
+# create a plot for cook's distance for the model, numbering the 5
+# highest distances
+plot(model, which = 4, id.n = 5)
+```
+
+
+```{r}
+
+
+# Here I will perform the post-stratification calculation
+ACSdata$logodds_estimate <-
+  model %>%
+  predict(newdata = ACSdata)
+
+ACSdata$estimate <-
+  exp(ACSdata$logodds_estimate)/(1+exp(ACSdata$logodds_estimate))
+
+n <- count(ACSdata)
+ACSdata %>%
+  mutate(alp_predict_prop = estimate*n) %>%
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n))
+prediction <- sum(ACSdata$estimate)
+final <- prediction/count(ACSdata)
+final
+```
+
+

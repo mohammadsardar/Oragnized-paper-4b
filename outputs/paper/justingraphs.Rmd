@@ -1,0 +1,256 @@
+---
+title: "My title"
+subtitle: "My subtitle if needed"
+author: "Justin"
+thanks: "Code and data are available at: LINK."
+date: "`r format(Sys.time(), '%d %B %Y')`"
+abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+output:
+  bookdown::pdf_document2
+toc: FALSE
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+```
+
+```{r reading in data, include=FALSE}
+UCLAdata <- read_csv("UCLA.csv")
+UCLAdata <- UCLAdata %>% select(-state)
+ACSdata <- read_csv("ACS.csv")
+```
+
+# Introduction
+
+
+
+
+
+# Data
+
+```{r data1, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Demographics of Sample and Population"}
+
+# set up proportions and plots for UCLAdata (polling data) and ACS (post_strat data)
+# We will be grouping up variables and getting the number of observations for each.
+# Then we can obtain the percentage for each variable.
+
+# Setting up proportions for UCLAdata (polling data)
+gender <- UCLAdata %>% 
+  group_by(sex) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "poll",
+         group = "gender") %>% 
+  rename(level = sex)
+
+races <- UCLAdata %>% 
+  group_by(race) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "poll",
+         group = "race") %>% 
+  rename(level = race)
+
+education <- UCLAdata %>% 
+  group_by(education_category) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "poll",
+         group = "education") %>% 
+  rename(level = education_category)
+
+age <- UCLAdata %>% 
+  group_by(age) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "poll",
+         group = "age") %>% 
+  rename(level = age)
+
+statesicp <- UCLAdata %>% 
+  group_by(stateicp) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "poll",
+         group = "state") %>% 
+   rename(level = stateicp)
+
+hispanic <- UCLAdata %>% 
+  group_by(hispan) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "poll",
+         group = "hispanic") %>% 
+   rename(level = hispan)
+
+# setting up proportions for ACS data (post-strat data)
+
+gender_post <- ACSdata %>% 
+  group_by(sex) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "post-strat",
+         group = "gender") %>% 
+  rename(level = sex)
+
+races_post <- ACSdata %>% 
+  group_by(race) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "post-strat",
+         group = "race") %>% 
+  rename(level = race)
+
+education_post <- ACSdata %>% 
+  group_by(education_category) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "post-strat",
+         group = "education") %>% 
+  rename(level = education_category)
+
+age_post <- ACSdata %>% 
+  group_by(age) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "post-strat",
+         group = "age") %>% 
+  rename(level = age)
+
+statesicp_post <- ACSdata %>% 
+  group_by(stateicp) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "post-strat",
+         group = "state") %>%
+  rename(level = stateicp)
+
+hispanic_post <- ACSdata %>% 
+  group_by(hispan) %>% 
+  summarise(n = n()) %>% 
+  mutate(pct = n/sum(n), type = "post-strat",
+         group = "hispanic") %>% 
+  rename(level = hispan)
+
+# combine all of our grouped data into one data set
+# called variables
+
+variables <- rbind(hispanic, hispanic_post,
+             age, age_post, gender, gender_post, 
+             races, races_post)
+
+# finally plot our results, grouped by variable with each line representing
+# the proportions for the polling and post-strat data
+
+variables %>% ggplot(aes(as.factor(level), pct, group=as.factor(type), linetype = as.factor(type))) + 
+  geom_line() + facet_grid(~group, scales = "free") + 
+  theme(axis.text.x = element_text(angle=70, size = 6, hjust = 1)) +
+  labs(x = "Category", y = "Proportion", linetype = "data set",
+       title = "Voter Demographics pt. 1") + 
+  scale_y_continuous(labels = scales::percent) +
+  geom_hline(yintercept = 0.5, alpha = 0.35)
+
+
+### Voter's demographics 
+
+# Making histograms for age percentage
+
+age %>% ggplot(aes(x = level, y = pct)) +
+ geom_histogram(stat = 'identity', position = "dodge") +
+ labs(x = "Age",
+      y = "Proportion")
+
+age_post%>% ggplot(aes(x = level, y = pct)) +
+ geom_histogram(stat = 'identity', position = "dodge") +
+ labs(x = "Age",
+      y = "Proportion")
+
+# Making bar plot for gender percentage 
+
+gender_both <- rbind(gender, gender_post)
+gender_both <- gender_both %>% 
+  mutate(level = ifelse(level == 0, "Female", "Male"))
+ggplot(gender_both, aes(x = level, y = pct, fill = type)) + geom_bar(stat="identity", position="dodge")
+  
+# Making bar plot for education percentage
+
+education_both <- rbind(education, education_post)
+education_both <- education_both %>% 
+  mutate(level = case_when(
+  level == 1 ~ "Below High School Diploma",
+  level == 2 ~ "High School Diploma",
+  level == 3 ~ "Post-Secondary Diploma"))
+ggplot(education_both, aes(x = level, y = pct, fill = type)) + geom_bar(stat="identity", position="dodge") 
+
+# Making bar plot for Hispanic percentage
+
+hispanic_both <- rbind(hispanic, hispanic_post)
+hispanic_both <- hispanic_both %>% 
+  mutate(level = ifelse(level == 0, "Not Hispanic", "Hispanic"))
+ggplot(hispanic_both, aes(x = level, y = pct, fill = type)) + geom_bar(stat="identity", position="dodge")
+
+# Making bar plot for Races
+```
+```{r}
+# Making histograms for age percentage
+
+meanage <- age %>% summarise(mean = mean(level)) 
+
+meanagepost <- age_post %>% summarise(mean = mean(level))
+
+combinedage <- rbind(meanage, meanagepost)
+kableExtra::kable(combinedage)
+
+```
+
+
+```{r, fig.width= 7, fig.height= 5}
+# Making histograms for state percentage
+
+UCLAstate <- statesicp %>% ggplot(aes(as.factor(level), pct, group=as.factor(type), linetype = as.factor(type))) + 
+  geom_line() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), legend.position = "none") +
+  labs(x = "",y = "Proportion",
+       title = "Proportion of people per state UCLA dataset") 
+
+ACSstate <- statesicp_post %>% ggplot(aes(as.factor(level), pct, group=as.factor(type), linetype = as.factor(type))) + 
+  geom_line() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), legend.position = "none") +
+  labs(x = "State", y = "Proportion",
+       title = "Proportion of people per state ACS dataset") 
+UCLAstate / ACSstate
+
+```
+
+# Model
+
+
+
+# Results
+
+```{r graph, echo=FALSE}
+ggplot() +
+  geom_point(data = UCLAdata, aes(x = , y = m), color = "blue") + 
+  geom_point(data = ACSdata, aes(x = clarity, y = m))
+```
+
+# Discussion
+
+## First discussion point
+
+
+## Second discussion point
+
+## Third discussion point
+
+## Weaknesses and next steps
+
+
+\newpage
+
+\appendix
+
+# Appendix {-}
+
+
+# Additional details
+
+
+\newpage
+
+
+# References
+
+

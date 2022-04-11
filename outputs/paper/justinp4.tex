@@ -1,0 +1,365 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Predicting the outcome of the 2020 US Presidential Elections},
+  pdfauthor={Justin Teng, Mohammad Sardar Sheikh, Danur Mahendra},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Predicting the outcome of the 2020 US Presidential Elections\thanks{Code and data are available at: LINK.}}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{My subtitle if needed}
+\author{Justin Teng, Mohammad Sardar Sheikh, Danur Mahendra}
+\date{10 April 2022}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+First sentence. Second sentence. Third sentence. Fourth sentence.
+\end{abstract}
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+This paper predicts the popular vote result of the 2020 United States presidential election using multilevel regression and post-stratification in R. As one of the most influential countries in the world, the election does not only affect American citizens; but rather, includes those nations who depend on the United States for aid, security, or trade. This presidential election is between the incumbent Republican president Donald Trump and Democratic candidate Joe Biden, who was the former vice-president serving from 2008-2016. Trump's presidency began with his inauguration following the 2016 presidential elections against Democratic candidate Hillary Clinton. Nevertheless, Trump's victory shocked major news outlets who considered him a significant underdog against Clinton (cite). Trump will now attempt to win a second term of presidency against Biden, who many analysts again see Trump as the underdog following his controversial time in office (). His tenure was met with criticism following his controversial stance or remarks on racial inequality, diplomatic relations, and inefficient spending (cite). Trump's turbulent presidency can be attributed to his lack of political experience and thus, many believe that a second term will not see much improvement. Ultimately, poll analysis and forecast outlets will once again favour the Democrat over the Republican in this presidential election. This paper will attempt to use R to forecast our own prediction and analyse the main driving factors behind each vote.
+
+In this report, we will be utilizing the data from U.S.presidential election 2020 survey data from Nationscape
+
+\hypertarget{data}{%
+\section{Data}\label{data}}
+
+This task requires multiple datasets to accurately predict the results of the 2020 United States popular vote. We first used Democracy Fund + UCLA Nationscape's December 2020 (Wave 76) data set to construct our multilevel regression method and followed it up by applying a post-stratification method using the IPUMS American Community Survey 2020 dataset. The ACS dataset would allow us to use our findings from the smaller Nationscape dataset to more accurately represent a much larger population.
+
+Nationscape is a weekly online survey conducted by LUCID for Democracy Fund and UCLA researchers. Data for this wave's dataset was collected between December 24 - 30, 2020 and received 6,692 samples. Each wave must collect a set of demographic quotas based on the respondents' age, gender, race/ethnicity, region, income, and education. The quotas are based on the U.S. adult population in 2017 provided by the U.S. Census Bureau. Respondents submit their responses through online survey software provided by LUCID.
+
+The ACS survey is a monthly rolling survey used to update census estimation for the Census Bureau. The ACS uses two sampling frames both provided by the Census Bureau, housing unit (HU) addresses and residents of group quarter (GQ) facilities. Samples were collected by a method of stratified sampling. Respondents were then contacted to complete the survey via either Computer-Assisted Personal Interview (CAPI) or Computer-Assisted Telephone Interview (CATI). The ACS samples include roughly 3 million households with each sampling unit representing a household and all persons residing in the household.
+
+The original datasets that we received needed to be cleaned so that they could be used effectively in our analysis. We used separate scripts to clean the datasets. First, we read in the datasets and then we choose the variables that we require. Since we are planning to do a regression with the data that we have, we cannot have any NA (missing) values in the cleaned datasets, so we remove all the rows that contain NA values. For the UCLA dataset, we create a new variable that equals 1 if a respondent chooses to vote for Donald Trump, and 0 if the respondent plans to vote for Joe Biden. We filter out all the observations that do not refer to either of these two candidates, for the sake of more accurate results. We then need to make sure that the common variables in both the datasets have equivalent values. We factorise race as a variable and we categorise it according to research and looking at the codebook for both the datasets. We categorise race into 5 parts, white, african american or black, asian and pacific islanders, native american, and others.
+
+Regarding education, we split it into 3 categories. The first one is pre-high school (the respondent has not received a high school diploma), the second is high school diploma or equal, and the third is college diploma or higher. Since we are interested in how the Hispanic community votes, we convert being hispanic into a binary variable, much like voting for Trump, where a value of 1 signals that the respondent is Hispanic, and 0 says otherwise. We do a very similar thing with gender, choosing to classify females as 1 and males as 0.
+
+Finally, we want to make sure that the value of States are the same for both the datasets. For this, all the unique strings need to match up accordingly, so ``New York'' has to be the same in both the datasets. It wont work if its ``New York'' for one and ``new york'' for the other.
+
+\hypertarget{model}{%
+\section{Model}\label{model}}
+
+We are interested in forecasting the popular vote result of the 2020 United States presidential election. In Particular, we want to predict the proportion of voters that will vote for the Republican candidate, Donald Trump. To achieve this, we used the December 2021 Nationscape dataset to find a relationship between population characteristics and their vote intention. We then used the 2020 ACS dataset to apply a post-stratification method. This technique allows us to fit a smaller data set to match one that would more accurately represent a much larger population. In this case, the population we are trying to represent is the American voting population.
+
+We used a logistic regression model to estimate the probability of a voter voting for Trump given certain characteristics (represented by predictor variables). An individual's voting intention is represented by a binary response variable in our data set thus, we believe that a logistic regression model best suits this task. The reason we don't choose a linear regression model is because we believe that a straight line will not accurately represent the data. A logistic regression line has a curved `S' shape, and this is more suited to predict and calculate binary values that can only either take 0 or 1 as responses. This is crucial as the post-stratification process is contingent on choosing the most appropriate model. Choosing a model that breaks assumptions may render our post-stratification and prediction inaccurate. The response variable in our model denotes whether the voter intends to vote for Republican candidate Trump. We get a probability (p) as the response so we assume that (1-p) is the probability that a respondent intends to vote for Joe Biden.
+
+The predictor variables used are the voter's age, state of residence, gender, race, income, whether the voter is Hispanic or not, and highest level of education attained as we believe they are key factors that form one's political views. We believe that age is an important variable as most people's political views change with age, with some particular age groups preferring one candidate over the other. States are a big part of the model, there are some states that are very pro Trump, and some states that are very anti-Trump. We feel like incorporating these differences in views is a crucial part for the model. Another variable that we feel is important to include is gender. A respondents gender can influence the way they perceive society and can affect their political views. There is a slight difference in the gender make-up of the country so we feel like we should include this as a variable. Education is another important variable that we want to include in the model. Educated people are more aware of the way society works and what is going on around them. They are less likely to make decisions based on passion and feelings and are more likely to think before they do something important, such as decide which candidate to support. The difference in viewpoints that they bring with them seems like an important thing to not include in our model. We decide to include whether a respondent is Hispanic or not in the model as we want to see whether these specific people will choose to vote for Trump, even after all the statements that he has made against them such as ``I would build a great wall, and nobody builds walls better than me, believe me, and I'll build them very inexpensively. I will build a great great wall on our southern border and I'll have Mexico pay for that wall.'' (Donald Trump). We want to see whether statements like these have had any effect on his popularity. Finally, we incorporate race into the model. People from different racial backgrounds have their own personal agendas, choosing to side with a specific candidate over the other.
+
+Incorporating all of these variables, our logistic regression model can be represented by the following formula:
+
+\begin{equation}
+  log(\frac{\hat{p}}{1 - \hat{p}}) = \beta_{0} + \beta_{1}x_{gender} +
+\beta_{2}x_{age} + \beta_{3}x_{race} + \beta_{4}x_{stateicp} + \beta_{5}x_{education_category} +
+\beta_{6}x_{hispanic}   \label{eq:logit}
+\end{equation}
+
+Equation \eqref{eq:logit} is not the full representation of the model as we have not shown the full model to account for space. \(\beta_{4}x_{stateicp}\) actually refers to all the different states that we have in the data set (50 of them), and each state has its own unique \(\beta\) value. Similar for education and race.
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+\hypertarget{voters-demographics}{%
+\subsection{Voter's Demographics}\label{voters-demographics}}
+
+\hypertarget{age}{%
+\subsubsection{Age}\label{age}}
+
+\begin{figure}
+\centering
+\includegraphics{justinp4_files/figure-latex/votersagepoll-1.pdf}
+\caption{\label{fig:votersagepoll}Voter's Demographic: Age (poll)}
+\end{figure}
+
+\hypertarget{gender}{%
+\subsubsection{Gender}\label{gender}}
+
+\begin{figure}
+\centering
+\includegraphics{justinp4_files/figure-latex/votersgender-1.pdf}
+\caption{\label{fig:votersgender}Voter's Demographic: Gender}
+\end{figure}
+
+\hypertarget{education}{%
+\subsubsection{Education}\label{education}}
+
+\begin{figure}
+\centering
+\includegraphics{justinp4_files/figure-latex/votersedu-1.pdf}
+\caption{\label{fig:votersedu}Voter's Demographic: Education}
+\end{figure}
+
+\hypertarget{hispanic}{%
+\subsubsection{Hispanic}\label{hispanic}}
+
+\begin{figure}
+\centering
+\includegraphics{justinp4_files/figure-latex/votershispan-1.pdf}
+\caption{\label{fig:votershispan}Voter's Demographic: Gender}
+\end{figure}
+
+\hypertarget{race}{%
+\subsubsection{Race}\label{race}}
+
+\begin{figure}
+\centering
+\includegraphics{justinp4_files/figure-latex/votersrace-1.pdf}
+\caption{\label{fig:votersrace}Voter's Demographic: Race}
+\end{figure}
+
+\hypertarget{states}{%
+\subsection{States}\label{states}}
+
+\hypertarget{regression-results}{%
+\subsection{Regression Results}\label{regression-results}}
+
+\begin{table}
+
+\caption{\label{tab:regression}Coefficients from the Model}
+\centering
+\begin{tabular}[t]{l|r|r|r|r}
+\hline
+predictor & estimate & standard error & statistic & p-value\\
+\hline
+\cellcolor{gray!6}{(Intercept)} & \cellcolor{gray!6}{1.165} & \cellcolor{gray!6}{0.340} & \cellcolor{gray!6}{3.431} & \cellcolor{gray!6}{0.001}\\
+\hline
+age & 0.014 & 0.002 & 6.777 & 0.000\\
+\hline
+\cellcolor{gray!6}{as.factor(race)2} & \cellcolor{gray!6}{-2.009} & \cellcolor{gray!6}{0.146} & \cellcolor{gray!6}{-13.777} & \cellcolor{gray!6}{0.000}\\
+\hline
+as.factor(race)3 & -0.305 & 0.322 & -0.947 & 0.344\\
+\hline
+\cellcolor{gray!6}{as.factor(race)4} & \cellcolor{gray!6}{-1.077} & \cellcolor{gray!6}{0.184} & \cellcolor{gray!6}{-5.844} & \cellcolor{gray!6}{0.000}\\
+\hline
+as.factor(race)5 & -0.886 & 0.165 & -5.356 & 0.000\\
+\hline
+\cellcolor{gray!6}{as.factor(education\_category)2} & \cellcolor{gray!6}{-0.288} & \cellcolor{gray!6}{0.131} & \cellcolor{gray!6}{-2.193} & \cellcolor{gray!6}{0.028}\\
+\hline
+as.factor(education\_category)3 & -0.769 & 0.130 & -5.894 & 0.000\\
+\hline
+\cellcolor{gray!6}{sex} & \cellcolor{gray!6}{-0.349} & \cellcolor{gray!6}{0.063} & \cellcolor{gray!6}{-5.528} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpAlaska & -1.152 & 0.690 & -1.669 & 0.095\\
+\hline
+\cellcolor{gray!6}{stateicpArizona} & \cellcolor{gray!6}{-1.297} & \cellcolor{gray!6}{0.365} & \cellcolor{gray!6}{-3.555} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpArkansas & -0.426 & 0.484 & -0.880 & 0.379\\
+\hline
+\cellcolor{gray!6}{stateicpCalifornia} & \cellcolor{gray!6}{-1.406} & \cellcolor{gray!6}{0.323} & \cellcolor{gray!6}{-4.350} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpColorado & -0.959 & 0.364 & -2.632 & 0.008\\
+\hline
+\cellcolor{gray!6}{stateicpConnecticut} & \cellcolor{gray!6}{-1.867} & \cellcolor{gray!6}{0.435} & \cellcolor{gray!6}{-4.292} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpDelaware & -1.740 & 0.636 & -2.736 & 0.006\\
+\hline
+\cellcolor{gray!6}{stateicpDistrict Of Columbia} & \cellcolor{gray!6}{-1.971} & \cellcolor{gray!6}{1.185} & \cellcolor{gray!6}{-1.663} & \cellcolor{gray!6}{0.096}\\
+\hline
+stateicpFlorida & -1.354 & 0.326 & -4.152 & 0.000\\
+\hline
+\cellcolor{gray!6}{stateicpGeorgia} & \cellcolor{gray!6}{-0.901} & \cellcolor{gray!6}{0.350} & \cellcolor{gray!6}{-2.573} & \cellcolor{gray!6}{0.010}\\
+\hline
+stateicpHawaii & -0.423 & 0.555 & -0.761 & 0.446\\
+\hline
+\cellcolor{gray!6}{stateicpIdaho} & \cellcolor{gray!6}{-0.601} & \cellcolor{gray!6}{0.520} & \cellcolor{gray!6}{-1.155} & \cellcolor{gray!6}{0.248}\\
+\hline
+stateicpIllinois & -1.316 & 0.338 & -3.889 & 0.000\\
+\hline
+\cellcolor{gray!6}{stateicpIndiana} & \cellcolor{gray!6}{-1.294} & \cellcolor{gray!6}{0.366} & \cellcolor{gray!6}{-3.534} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpIowa & -1.314 & 0.420 & -3.127 & 0.002\\
+\hline
+\cellcolor{gray!6}{stateicpKansas} & \cellcolor{gray!6}{-0.876} & \cellcolor{gray!6}{0.427} & \cellcolor{gray!6}{-2.053} & \cellcolor{gray!6}{0.040}\\
+\hline
+stateicpKentucky & -0.678 & 0.399 & -1.701 & 0.089\\
+\hline
+\cellcolor{gray!6}{stateicpLouisiana} & \cellcolor{gray!6}{-1.075} & \cellcolor{gray!6}{0.451} & \cellcolor{gray!6}{-2.383} & \cellcolor{gray!6}{0.017}\\
+\hline
+stateicpMaine & -1.209 & 0.563 & -2.148 & 0.032\\
+\hline
+\cellcolor{gray!6}{stateicpMaryland} & \cellcolor{gray!6}{-1.624} & \cellcolor{gray!6}{0.399} & \cellcolor{gray!6}{-4.069} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpMassachusetts & -2.126 & 0.401 & -5.297 & 0.000\\
+\hline
+\cellcolor{gray!6}{stateicpMichigan} & \cellcolor{gray!6}{-1.386} & \cellcolor{gray!6}{0.342} & \cellcolor{gray!6}{-4.051} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpMinnesota & -1.267 & 0.379 & -3.345 & 0.001\\
+\hline
+\cellcolor{gray!6}{stateicpMississippi} & \cellcolor{gray!6}{-0.652} & \cellcolor{gray!6}{0.511} & \cellcolor{gray!6}{-1.276} & \cellcolor{gray!6}{0.202}\\
+\hline
+stateicpMissouri & -0.924 & 0.366 & -2.524 & 0.012\\
+\hline
+\cellcolor{gray!6}{stateicpMontana} & \cellcolor{gray!6}{-0.720} & \cellcolor{gray!6}{0.731} & \cellcolor{gray!6}{-0.986} & \cellcolor{gray!6}{0.324}\\
+\hline
+stateicpNebraska & -0.981 & 0.490 & -2.001 & 0.045\\
+\hline
+\cellcolor{gray!6}{stateicpNevada} & \cellcolor{gray!6}{-1.711} & \cellcolor{gray!6}{0.426} & \cellcolor{gray!6}{-4.017} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpNew Hampshire & -1.762 & 0.712 & -2.477 & 0.013\\
+\hline
+\cellcolor{gray!6}{stateicpNew Jersey} & \cellcolor{gray!6}{-1.657} & \cellcolor{gray!6}{0.361} & \cellcolor{gray!6}{-4.584} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpNew Mexico & -1.363 & 0.530 & -2.572 & 0.010\\
+\hline
+\cellcolor{gray!6}{stateicpNew York} & \cellcolor{gray!6}{-1.520} & \cellcolor{gray!6}{0.331} & \cellcolor{gray!6}{-4.598} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpNorth Carolina & -1.244 & 0.353 & -3.522 & 0.000\\
+\hline
+\cellcolor{gray!6}{stateicpNorth Dakota} & \cellcolor{gray!6}{-0.241} & \cellcolor{gray!6}{0.760} & \cellcolor{gray!6}{-0.317} & \cellcolor{gray!6}{0.751}\\
+\hline
+stateicpOhio & -1.168 & 0.338 & -3.453 & 0.001\\
+\hline
+\cellcolor{gray!6}{stateicpOklahoma} & \cellcolor{gray!6}{-0.479} & \cellcolor{gray!6}{0.437} & \cellcolor{gray!6}{-1.096} & \cellcolor{gray!6}{0.273}\\
+\hline
+stateicpOregon & -1.029 & 0.393 & -2.620 & 0.009\\
+\hline
+\cellcolor{gray!6}{stateicpPennsylvania} & \cellcolor{gray!6}{-1.216} & \cellcolor{gray!6}{0.337} & \cellcolor{gray!6}{-3.609} & \cellcolor{gray!6}{0.000}\\
+\hline
+stateicpRhode Island & -2.403 & 0.655 & -3.670 & 0.000\\
+\hline
+\cellcolor{gray!6}{stateicpSouth Carolina} & \cellcolor{gray!6}{-0.614} & \cellcolor{gray!6}{0.379} & \cellcolor{gray!6}{-1.619} & \cellcolor{gray!6}{0.105}\\
+\hline
+stateicpSouth Dakota & -1.298 & 0.643 & -2.019 & 0.043\\
+\hline
+\cellcolor{gray!6}{stateicpTennessee} & \cellcolor{gray!6}{-0.678} & \cellcolor{gray!6}{0.375} & \cellcolor{gray!6}{-1.811} & \cellcolor{gray!6}{0.070}\\
+\hline
+stateicpTexas & -1.179 & 0.328 & -3.596 & 0.000\\
+\hline
+\cellcolor{gray!6}{stateicpUtah} & \cellcolor{gray!6}{-0.258} & \cellcolor{gray!6}{0.468} & \cellcolor{gray!6}{-0.552} & \cellcolor{gray!6}{0.581}\\
+\hline
+stateicpVermont & -14.314 & 216.133 & -0.066 & 0.947\\
+\hline
+\cellcolor{gray!6}{stateicpVirginia} & \cellcolor{gray!6}{-1.208} & \cellcolor{gray!6}{0.362} & \cellcolor{gray!6}{-3.338} & \cellcolor{gray!6}{0.001}\\
+\hline
+stateicpWashington & -1.823 & 0.358 & -5.087 & 0.000\\
+\hline
+\cellcolor{gray!6}{stateicpWest Virginia} & \cellcolor{gray!6}{-0.508} & \cellcolor{gray!6}{0.584} & \cellcolor{gray!6}{-0.870} & \cellcolor{gray!6}{0.385}\\
+\hline
+stateicpWisconsin & -1.326 & 0.370 & -3.581 & 0.000\\
+\hline
+\cellcolor{gray!6}{stateicpWyoming} & \cellcolor{gray!6}{-0.802} & \cellcolor{gray!6}{0.692} & \cellcolor{gray!6}{-1.158} & \cellcolor{gray!6}{0.247}\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
+
+\hypertarget{first-discussion-point}{%
+\subsection{First discussion point}\label{first-discussion-point}}
+
+\hypertarget{second-discussion-point}{%
+\subsection{Second discussion point}\label{second-discussion-point}}
+
+\hypertarget{third-discussion-point}{%
+\subsection{Third discussion point}\label{third-discussion-point}}
+
+\hypertarget{weaknesses-and-next-steps}{%
+\subsection{Weaknesses and next steps}\label{weaknesses-and-next-steps}}
+
+\newpage
+
+\appendix
+
+\hypertarget{appendix}{%
+\section*{Appendix}\label{appendix}}
+\addcontentsline{toc}{section}{Appendix}
+
+\hypertarget{additional-details}{%
+\section{Additional details}\label{additional-details}}
+
+\newpage
+
+\hypertarget{references}{%
+\section{References}\label{references}}
+
+\end{document}
