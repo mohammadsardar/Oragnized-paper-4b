@@ -33,4 +33,4 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 # the input files
-/inputs/data
+/inputs/data/
