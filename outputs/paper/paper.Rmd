@@ -1,11 +1,11 @@
 ---
-title: "Predicting the US 2020 election vote"
-subtitle: "My subtitle if needed"
+title: "Joe Biden is Projected to Win the 2020 US election with 57% of Votes"
+subtitle: "A Prediction of the 2020 US Election"
 author: 
-  - Mohammad Sardar Sheikh, Danur Mahendra, Justin Teng
-thanks: "Code and data are available at: LINK."
+  - Mohammad Sardar Sheikh, Justin Teng, Danur
+thanks: "Code and data are available at: https://github.com/mohammadsardar/Oragnized-paper-4b"
 date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "The US elections have always been a globally influential event, this 2020 presidential election between Donald Trump from the Republican and Joe Biden from the Democrats is no exception. This report predicts the winner of the 2020 United States presidential election using multilevel regression and post-stratification. According to the model we obtained, we predict that Joe Biden will win the popular vote over Donald Trump, with the results 57% to 43%. This paper provides insightfull analysis on the factors affecting the outcome of the election, and it can be useful in terms of forecasting the US president, who will become one of the most influential person in the world."
 output:
   bookdown::pdf_document2
 toc: FALSE
@@ -22,12 +22,12 @@ library(patchwork)
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). R Markdown automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point). 
+In this report, we will be predicting the popular vote result of the 2020 United States presidential election using multilevel regression and post-stratification in R(@citeR). As one of the most influential countries in the world, the US election does not only affect American citizens, it also impact those nations who depend on the United States for assistance, security, or trade, etc. This presidential election is between the incumbent Republican president Donald Trump and Democratic candidate Joe Biden, who was the former vice-president serving from 2008-2016. Trump’s presidency began after the 2016 presidential elections against Democratic candidate Hillary Clinton. The 2016 presidential elections surprised the entire world, for Clinton had been heavily favored to win as the predictions made by most data journalism in particular(@politico).  Heading into the election, Clinton was leading national polls and in most battleground states(@politico). Nonetheless, Trump’s victory shocked major news outlets who considered him a significant underdog against Clinton.(@newyorktimes)  Trump will now attempt to win a second term of presidency against Biden, who many analysts again see Trump as the underdog following his controversial time in office. His tenure was met with criticism following his controversial stance or remarks on racial inequality, diplomatic relations, and inefficient spending . Trump’s turbulent presidency can be attributed to his lack of political experience and thus, many believe that a second term will not see much improvement. Ultimately, poll analysis and forecast outlets will once again favour the Democrat over the Republican in this presidential election(@economist). In this report, we will attempt to use R to forecast our own prediction and analyse the main driving factors behind each vote.
 
-This paper predicts the popular vote result of the 2020 United States presidential election using multilevel regression and post-stratification in R. As one of the most influential countries in the world, the election does not only affect American citizens; but rather, includes those nations who depend on the United States for aid, security, or trade. This presidential election is between the incumbent Republican president Donald Trump and Democratic candidate Joe Biden, who was the former vice-president serving from 2008-2016. Trump’s presidency began with his inauguration following the 2016 presidential elections against Democratic candidate Hillary Clinton. Nevertheless, Trump’s victory shocked major news outlets who considered him a significant underdog against Clinton (cite). Trump will now attempt to win a second term of presidency against Biden, who many analysts again see Trump as the underdog following his controversial time in office (). His tenure was met with criticism following his controversial stance or remarks on racial inequality, diplomatic relations, and inefficient spending (cite). Trump’s turbulent presidency can be attributed to his lack of political experience and thus, many believe that a second term will not see much improvement. Ultimately, poll analysis and forecast outlets will once again favour the Democrat over the Republican in this presidential election. This paper will attempt to use R to forecast our own prediction and analyse the main driving factors behind each vote.
+For performing our prediction, we will be utilizing the data from U.S.presidential election 2020 survey data from Nationscape, which was conducted on June 25, 2020. Following it up, we will apply a post-stratification method using the data from IPUMS American Community Survey 2020, for a representation of larger population. Then, we cleaned the two datasets according to the variables that we are focusing on. The predictor variables we will be using are the voter’s age, state of residence, gender, race, income, Hispanicity, and level of education as we believe they are key factors impacting the outcome of this election. For the model, we used a logistic regression model to estimate the probability of a voter voting for Trump corresponding to each variable. In the result section, we made graphs for the voter's demographic according to each variable. Based on our analysis, we predict that 43 percent of the voters will decide to vote for Donald Trump.
 
-In this report, we will be utilizing the data from U.S.presidential election 2020 survey data from Nationscape
-
+Our report is conducted using R(@citeR) and tidyverse(@citeTidyverse), and was then
+compiled using R markdown(@citemarkdown)
 
 
 # Data
@@ -69,6 +69,7 @@ ACSdata <- read_csv("data/ACS.csv")
 
 
 ```{r}
+# this is the code that I did
 #want to compare some of the summary parts for both of the papers.
 #varialbes that we want to compare are: 1. gender, 2. race, 3. education, 4. age, 5. state, 6. hispanic
 
@@ -288,7 +289,7 @@ ggplot(ages_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="identit
   labs(x= "Age", y = "Proportion")
 ```
 
-We can see from \@ref(votersagepoll) the way that age was distributed in the UCLA and ACS data. We have a smaller proportion for ACS because there were a number of observations that were from respondents that had not yet turned 18 and hence could not vote.
+We can see from \@ref(fig:votersagepoll) the way that age was distributed in the UCLA and ACS data. We have a smaller proportion for ACS because there were a number of observations that were from respondents that had not yet turned 18 and hence could not vote.
 
 ### Gender
 
@@ -302,7 +303,7 @@ ggplot(gender_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="ident
   labs(x= "Gender", y = "Proportion")
 ```
 
-We can see from ref graph that the proportion of males and females in the two data sets are different, with the post stratification data having a higher male population as compared to the polling data.
+We can see from \@ref(fig:votersgender) that the proportion of males and females in the two data sets are different, with the post stratification data having a higher male population as compared to the polling data.
 
 ### Education
 
@@ -320,7 +321,7 @@ ggplot(education_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="id
   labs(x= "Education Level", y = "Proportion")
 ```
 
-We can see from the education graph that most of the people in the polling data have an education that is college degree or higher, whereas most of the people in the post stratification data have an education only comparable to high school level. 
+We can see from \@ref(fig:votersedu) that most of the people in the polling data have an education that is college degree or higher, whereas most of the people in the post stratification data have an education only comparable to high school level. 
 
 
 ### Hispanic
@@ -335,7 +336,7 @@ ggplot(hispanic_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="ide
   labs(x= "Hispanicity", y = "Proportion")
 ```
 
-(ref) We can see from the graph above that the distribution for a voter being hispanic or not is the same in both of the datasets.
+We can see from \@ref(fig:votershispan) above that the distribution for a voter being hispanic or not is the same in both of the datasets.
 
 
 ### Race
@@ -356,7 +357,7 @@ ggplot(races_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="identi
   labs(x= "Race", y = "Proportion")
 ```
 
-From the graph above we can see that respondents race is equally distributed across the two datasets. With the only differences being a slight increase in 'other' races for the post stratification dataset, and a slight increase in 'white' for the polling datset.
+From \@ref(fig:votersrace) above we can see that respondents race is equally distributed across the two datasets. With the only differences being a slight increase in 'other' races for the post stratification dataset, and a slight increase in 'white' for the polling datset.
 
 ### States
 ```{r voterstates, fig.width= 7, fig.height= 4.5, echo=FALSE}
@@ -374,7 +375,7 @@ ACSstate <- statesicp_post %>% ggplot(aes(as.factor(value), pct, group=as.factor
 UCLAstate / ACSstate
 ```
 
-The above graph shows us the relative proportion of people that belong to each of the states. While the concentrations appear to be approximately the same, we do have some states that have different proportions. States such as Florida, New York and Nevada appear to have subtle differences in proportions.
+\@ref(fig:voterstates) shows us the relative proportion of people that belong to each of the states. While the concentrations appear to be approximately the same, we do have some states that have different proportions. States such as Florida, New York and Nevada appear to have subtle differences in proportions.
 
 ### Regression and Results
 
@@ -446,6 +447,7 @@ final <- prediction/count(ACSdata)
 ```
 
 When we use our regression model that we have fit using the UCLA polling data, on the ACS post stratification data, the result that we get is that only 43% of the population will vote for Donald Trump in the 2020 US presidential elections. This results tell us that Trump will lose the elections and that Joe Biden will win (which is exactly what happened). 
+
 # Discussion
 
 For this research paper we took two different sources of data and we used those to predict the outcome of the 2020 US general elections. We cleaned the datasets first to make all the variables equal and we then created and fit a logistic regression model, taking a vote for Donald trump as the response variable. A logistic regression model has a binary response and gives us relative probabilities as the coefficients of the predictors. We fit this model on the UCLA dataset as the dataset had a respondents vote intention as one of the variables that was recorded. We then use the model that we have fit, on the post stratification dataset (the ACS data) and we find predictions on the outcome of the 2020 US election based on the results of the prediction. 
