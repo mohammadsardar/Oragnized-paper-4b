@@ -165,14 +165,7 @@ Incorporating all of these variables, our logistic regression model can be repre
 
 Equation \@ref(eq:logit) is not the full representation of the model as we have not shown the full model to account for space. $\beta_{4}x_{stateicp}$ actually refers to all the different states that we have in the data set (50 of them), and each state has its own unique $\beta$ value. Similar for education and race. The intercept for a logistic regression model, $\beta_0$, while included, does not offer much in terms of information and interpretability
 
-
-\begin{equation}
-Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
-\end{equation}
-
-Equation \@ref(eq:bayes) seems useful, eh?
-
-
+\newpage
 
 # Results
 
@@ -274,7 +267,7 @@ hispanic_post <- ACSdata %>%
 
 ### Age
 
-```{r votersagepoll, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 7, fig.height= 4, fig.cap = "Voter's Demographic: Age (poll)"}
+```{r votersagepoll, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 7, fig.height= 3.5, fig.cap = "Voter's Demographic: Age (poll)"}
 # Making Histogram for Age Percentage
 ages_both <- rbind(age, age_post)
 ages_both <- ages_both %>%
@@ -289,11 +282,11 @@ ggplot(ages_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="identit
   labs(x= "Age", y = "Proportion")
 ```
 
-We can see from \@ref(fig:votersagepoll) the way that age was distributed in the UCLA and ACS data. We have a smaller proportion for ACS because there were a number of observations that were from respondents that had not yet turned 18 and hence could not vote.
+We can see from Figure \@ref(fig:votersagepoll) the way that age was distributed in the UCLA and ACS data. We have a smaller proportion for ACS because there were a number of observations that were from respondents that had not yet turned 18 and hence could not vote.
 
 ### Gender
 
-```{r votersgender, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 7, fig.height= 3, fig.cap = "Voter's Demographic: Gender"}
+```{r votersgender, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 7, fig.height= 2, fig.cap = "Voter's Demographic: Gender"}
 # Making bar plot for gender percentage 
 
 gender_both <- rbind(gender, gender_post)
@@ -303,7 +296,7 @@ ggplot(gender_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="ident
   labs(x= "Gender", y = "Proportion")
 ```
 
-We can see from \@ref(fig:votersgender) that the proportion of males and females in the two data sets are different, with the post stratification data having a higher male population as compared to the polling data.
+We can see from Figure \@ref(fig:votersgender) that the proportion of males and females in the two data sets are different, with the post stratification data having a higher male population as compared to the polling data.
 
 ### Education
 
@@ -321,7 +314,7 @@ ggplot(education_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="id
   labs(x= "Education Level", y = "Proportion")
 ```
 
-We can see from \@ref(fig:votersedu) that most of the people in the polling data have an education that is college degree or higher, whereas most of the people in the post stratification data have an education only comparable to high school level. 
+We can see from Figure \@ref(fig:votersedu) that most of the people in the polling data have an education that is college degree or higher, whereas most of the people in the post stratification data have an education only comparable to high school level. 
 
 
 ### Hispanic
@@ -336,7 +329,7 @@ ggplot(hispanic_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="ide
   labs(x= "Hispanicity", y = "Proportion")
 ```
 
-We can see from \@ref(fig:votershispan) above that the distribution for a voter being hispanic or not is the same in both of the datasets.
+We can see from Figure \@ref(fig:votershispan) above that the distribution for a voter being hispanic or not is the same in both of the datasets.
 
 
 ### Race
@@ -360,6 +353,7 @@ ggplot(races_both, aes(x = value, y = pct, fill = type)) + geom_bar(stat="identi
 From \@ref(fig:votersrace) above we can see that respondents race is equally distributed across the two datasets. With the only differences being a slight increase in 'other' races for the post stratification dataset, and a slight increase in 'white' for the polling datset.
 
 ### States
+
 ```{r voterstates, fig.width= 7, fig.height= 4.5, echo=FALSE}
 # Making histograms for state percentage
 
@@ -375,7 +369,7 @@ ACSstate <- statesicp_post %>% ggplot(aes(as.factor(value), pct, group=as.factor
 UCLAstate / ACSstate
 ```
 
-\@ref(fig:voterstates) shows us the relative proportion of people that belong to each of the states. While the concentrations appear to be approximately the same, we do have some states that have different proportions. States such as Florida, New York and Nevada appear to have subtle differences in proportions.
+Figure \@ref(fig:voterstates) shows us the relative proportion of people that belong to each of the states. While the concentrations appear to be approximately the same, we do have some states that have different proportions. States such as Florida, New York and Nevada appear to have subtle differences in proportions.
 
 ### Regression and Results
 
@@ -401,9 +395,9 @@ knitr::kable(Betavalues,
 #summary(model)
 ```
 
-Have to ref the table:
 
-We can see from the results of the logistic regression model above that most of the states are not in favor of voting for Trump. This can be seen from the negative values that we get in the regression table that we have.
+
+We can see from the results of the logistic regression model Table \@ref(tab:regression) above that most of the states are not in favor of voting for Trump. This can be seen from the negative values that we get in the regression table that we have.
 Since we have done a logistic regression model, the coefficient values that we get cant be interpreted normally, they are the log odd ratio's. What this means is that if the value that we get is negative, then the voter is more likely to vote for Joe Biden, whereas if the value that we get is positive, then the voter is more likely to vote for Donald Trump. Based on the results above, we can see that age is the only variable that has a positive effect on Trump, as the voter gets older, there is a higher chance for them to vote for Trump.
 
 
@@ -423,7 +417,7 @@ knitr::kable(expmodel,
 
 ```
 
-We can get odds ratios for the model simply by exponentiating the coefficients. What these odd ratios tell us are the relative chance that a particular group votes for Trump as compared to the baseline for that group. We can see from the table above that African American people (race2) are very unlikely to vote for Trump. the coefficient tells us that the probability that an African American votes for Trump is 0.17 the probability that a white person votes for Trump. Similarly, for education we can see that the more educated that you are, the less likely it is that you vote for Donald Trump, as can be seen from the coefficients. While all of the states are slightly against voting for Trump, some of them are very heavily against him. States like Columbia, Rhode Island and Vermont are very likely to vote for Joe Biden instead of Trump.
+In Table \@ref(tab:expreg) , we can get odds ratios for the model simply by exponentiating the coefficients. What these odd ratios tell us are the relative chance that a particular group votes for Trump as compared to the baseline for that group. We can see from the table above that African American people (race2) are very unlikely to vote for Trump. the coefficient tells us that the probability that an African American votes for Trump is 0.17 the probability that a white person votes for Trump. Similarly, for education we can see that the more educated that you are, the less likely it is that you vote for Donald Trump, as can be seen from the coefficients. While all of the states are slightly against voting for Trump, some of them are very heavily against him. States like Columbia, Rhode Island and Vermont are very likely to vote for Joe Biden instead of Trump.
 
 ### Predicting
 
@@ -450,10 +444,11 @@ When we use our regression model that we have fit using the UCLA polling data, o
 
 # Discussion
 
-For this research paper we took two different sources of data and we used those to predict the outcome of the 2020 US general elections. We cleaned the datasets first to make all the variables equal and we then created and fit a logistic regression model, taking a vote for Donald trump as the response variable. A logistic regression model has a binary response and gives us relative probabilities as the coefficients of the predictors. We fit this model on the UCLA dataset as the dataset had a respondents vote intention as one of the variables that was recorded. We then use the model that we have fit, on the post stratification dataset (the ACS data) and we find predictions on the outcome of the 2020 US election based on the results of the prediction. 
-	We can see from our model results, that our model predicts that Donald Trump is expected to receive 43% of the votes for the 2020 US elections. We unfortunately are not completely certain whether this grants him a victory or not as we are not aware of the percentage of the other respondents that vote for Joe Biden vs the percentage that vote for a third party (though we can make a strong prediction that Joe Biden will win that election based on the results). We can see that there are certain factors that make it more likely for a candidate to vote for Trump. These are RESULTS to be discussed here along with some literature review.
-	Based on the results of our logistic regression model, we can see that most of the states have a higher tendency to vote for Joe Biden as compared to Donald Trump. This does not exactly seem to make sense as their are some states that are very pro Trump, yet the output of the model tells us otherwise. We can also se from the results that females are slightly more likely to vote for Joe Biden as compared to Donald Trump. Based on common knowledge, people that belong to the Hispanic community are not major fans of Donald Trump. They are very unlikely to vote for Donald Trump in the 2020 elections. From the model results we can also see that the odds of voting for Trump decrease if the respondent is not ‘white’. All of the other races are less likely to vote for Donald trump as compared to white people.
-	There are some things that we need to take into account while presenting our results. The survey data that we have was gathered in December 2020, while the US elections took place in November 2020. Essentially we have used data from beyond the election to predict the results of the election. This can pose some problems as Americans were regretting electing Trump very soon after he was sworn in. Another potential reason as to why we are getting biased results may be because in our survey data, the majority of the respondents (around 60%) were intending to vote for Joe Biden. This may have slightly biased the results of the model.
+For this research paper we took two different sets of data and we used those to predict the outcome of the 2020 US general elections. We cleaned the datasets first to make all the variables equal and we then created and fit a logistic regression model, taking a vote for Donald trump as the response variable. A logistic regression model has a binary response and gives us relative probabilities as the coefficients of the predictors. We fit this model on the UCLA dataset as the dataset had a respondents vote intention as one of the variables that was recorded. We then use the model that we have fit, on the post stratification dataset (the ACS data) and we find predictions on the outcome of the 2020 US election based on the results of the prediction.
+We can see from our model results, that our model predicts that Donald Trump is expected to receive 43% of the votes for the 2020 US elections. We unfortunately are not completely certain whether this grants him a victory or not as we are not aware of the percentage of the other respondents that vote for Joe Biden vs the percentage that vote for a third party (though we can make a strong prediction that Joe Biden will win that election based on the results). We can see that there are certain factors that make it more likely for a candidate to vote for Trump. These are RESULTS to be discussed here along with some literature review.
+Based on the results of our logistic regression model, we can see that most of the states have a higher tendency to vote for Joe Biden as compared to Donald Trump. This does not exactly seem to make sense as there are some states that are very pro Trump, yet the output of the model tells us otherwise. We can also see from the results that females are slightly more likely to vote for Joe Biden as compared to Donald Trump. We are choosing the Hispanicity of voters as one of our variable, for it is well-known that Donald Trump had a bad reputation among the Hispanic community for many of his discriminating comments about Hispanic people. For example, he once refers to the Mexican people saying that "they're bringing drugs, they’re bringing crime, they’re rapists."{@global}  Therefore, we think this will be a major factor in determining the Hispanic voters' decision in the election, for they are very unlikely to vote for Donald Trump. From the model results we can also see that the odds of voting for Trump decrease if the respondent is not ‘white’. All of the other races are less likely to vote for Donald trump as compared to white people.
+There are some things that we need to take into account while presenting our results. The survey data that we have was gathered in December 2020, while the US elections took place in November 2020. Essentially we have used data from beyond the election to predict the results of the election. This can pose some problems as Americans were regretting electing Trump very soon after he was sworn in. Another potential reason as to why we are getting biassed results may be because in our survey data, the majority of the respondents (around 60%) were intending to vote for Joe Biden. This may have slightly biased the results of the model.
+  
 
 
 
@@ -464,15 +459,6 @@ There are some limitations that we have to consider. Our model and prediction ar
 
 \newpage
 
-\appendix
-
-# Appendix {-}
-
-
-# Additional details
-
-
-\newpage
 
 
 # References
